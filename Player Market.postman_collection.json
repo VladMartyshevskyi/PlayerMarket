@@ -1,0 +1,208 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Player Market",
+		"_postman_id": "524599f0-ccd3-2ec7-a334-e4b04e1592c5",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET Players",
+			"request": {
+				"url": "http://localhost:8080/players",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET Player by ID",
+			"request": {
+				"url": "http://localhost:8080/players/4",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET Player Teams",
+			"request": {
+				"url": "http://localhost:8080/players/4/teams",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET Player Contracts",
+			"request": {
+				"url": "http://localhost:8080/players/4/contracts",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create new Player ",
+			"request": {
+				"url": "http://localhost:8080/players/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"Testing\",\n    \"lastName\": \"Player\",\n    \"age\": 19,\n    \"experience\": 24\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer Player to Team",
+			"request": {
+				"url": "http://localhost:8080/players/4/transfer",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"playerId\": 4,\n    \"teamId\": 2\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update Player",
+			"request": {
+				"url": "http://localhost:8080/players/8",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"age\": 30,\n    \"experience\": 8\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Player",
+			"request": {
+				"url": "http://localhost:8080/players/19",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET Teams",
+			"request": {
+				"url": "http://localhost:8080/teams",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET Team by ID",
+			"request": {
+				"url": "http://localhost:8080/teams/1",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create new Team",
+			"request": {
+				"url": "http://localhost:8080/teams/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"Testing team\",\n    \"country\": \"USA\",\n    \"commissionPercent\": 6,\n    \"balance\": 180000\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update team",
+			"request": {
+				"url": "http://localhost:8080/teams/33",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"Testing team Updated\",\n    \"country\": \"UK\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete team",
+			"request": {
+				"url": "http://localhost:8080/teams/33",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"Testing team Updated\",\n    \"country\": \"UK\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
