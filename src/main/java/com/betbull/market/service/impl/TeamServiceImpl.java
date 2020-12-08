@@ -28,9 +28,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public Team update(Team team) {
-        Optional<Team> currentTeam = teamRepository.findById(team.getId());
-        if (currentTeam.isPresent()) {
-            Team current = currentTeam.get();
+        return teamRepository.findById(team.getId()).map(current -> {
             if (team.getTitle() != null) {
                 current.setTitle(team.getTitle());
             }
@@ -43,9 +41,8 @@ public class TeamServiceImpl implements TeamService {
             if (team.getCountry() != null) {
                 current.setCountry(team.getCountry());
             }
-            return teamRepository.save(current);
-        }
-        return null;
+            return current;
+        }).map(teamRepository::save).orElse(null);
     }
 
     @Override

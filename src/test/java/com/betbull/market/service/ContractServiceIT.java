@@ -7,6 +7,7 @@ import com.betbull.market.model.Player;
 import com.betbull.market.model.Team;
 import org.junit.After;
 import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +21,7 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ContractServiceTest {
+public class ContractServiceIT {
 
     @Autowired
     private PlayerService playerService;
@@ -60,14 +61,16 @@ public class ContractServiceTest {
         assertEquals(player.getId(), contract.getPlayer().getId());
         assertEquals(barcelona.getId(), contract.getTeam().getId());
 
+
         // Check balances
         wales = teamService.getById(wales.getId()).orElse(null);
         barcelona = teamService.getById(barcelona.getId()).orElse(null);
-        double contractFee = contractService.calculateContractFee(player, wales);
+        Double contractFee = contractService.calculateContractFee(player, wales);
         assertNotNull(wales);
         assertNotNull(barcelona);
         assertEquals(0, barcelona.getBalance().compareTo(barcelonaBalanceBefore - contractFee));
         assertEquals(0, wales.getBalance().compareTo(walesBalanceBefore + contractFee));
+        assertEquals(contractFee, contract.getContractFee());
     }
 
     @Test

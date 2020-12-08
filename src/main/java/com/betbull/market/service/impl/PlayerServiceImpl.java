@@ -27,9 +27,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public Player update(Player player) {
-        Optional<Player> currentPlayer = playerRepository.findById(player.getId());
-        if (currentPlayer.isPresent()) {
-            Player current = currentPlayer.get();
+        return playerRepository.findById(player.getId()).map(current -> {
             if (player.getFirstName() != null) {
                 current.setFirstName(player.getFirstName());
             }
@@ -42,9 +40,8 @@ public class PlayerServiceImpl implements PlayerService {
             if (player.getExperience() != null) {
                 current.setExperience(player.getExperience());
             }
-            return playerRepository.save(current);
-        }
-        return null;
+            return current;
+        }).map(playerRepository::save).orElse(null);
     }
 
     @Override

@@ -28,15 +28,20 @@ public class Contract {
     @Column(nullable = false)
     private Boolean active;
 
+    @Column(nullable = false)
+    private Double contractFee;
+
     /**
      * Instantiates a new Contract.
      *
-     * @param player the player
-     * @param team   the team
+     * @param player        the player
+     * @param team          the team
+     * @param contractFee   the contractFee
      */
-    public Contract(Player player, Team team) {
+    public Contract(Player player, Team team, Double contractFee) {
         this.player = player;
         this.team = team;
         this.active = true;
+        this.contractFee = contractFee;
     }
 }

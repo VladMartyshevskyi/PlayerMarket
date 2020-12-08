@@ -39,17 +39,18 @@ public class ContractServiceImpl implements ContractService {
     @Transactional
     public Contract transferPlayer(Player player, Team team) throws IllegalTransferException {
         Contract currentContract = contractRepository.findByPlayerIdAndActiveTrue(player.getId());
+        double contractFee = 0.0;
         if (currentContract != null) {
             Team currentTeam = currentContract.getTeam();
             if (currentTeam.getId().equals(team.getId())) {
                 throw new IllegalTransferException("Player has active contract with the specified team");
             }
-            double contractFee = calculateContractFee(player, currentTeam);
+            contractFee = calculateContractFee(player, currentTeam);
             transferFunds(team, currentTeam, contractFee);
             currentContract.setActive(false);
             contractRepository.save(currentContract);
         }
-        Contract contract = new Contract(player, team);
+        Contract contract = new Contract(player, team, contractFee);
         contractRepository.save(contract);
         return contract;
     }
