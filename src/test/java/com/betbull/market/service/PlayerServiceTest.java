@@ -4,6 +4,7 @@ import com.betbull.market.model.Player;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +20,7 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class PlayerServiceIT {
+public class PlayerServiceTest {
     @Autowired
     private PlayerService playerService;
 

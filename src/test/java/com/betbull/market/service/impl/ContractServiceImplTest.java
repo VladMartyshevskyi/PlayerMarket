@@ -7,6 +7,7 @@ import com.betbull.market.model.Player;
 import com.betbull.market.model.Team;
 import com.betbull.market.repository.ContractRepository;
 import com.betbull.market.service.TeamService;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
+@Tag("unit")
 class ContractServiceImplTest {
 
     @Mock

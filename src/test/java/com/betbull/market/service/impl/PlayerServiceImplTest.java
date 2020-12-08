@@ -2,6 +2,7 @@ package com.betbull.market.service.impl;
 
 import com.betbull.market.model.Player;
 import com.betbull.market.repository.PlayerRepository;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@Tag("unit")
 class PlayerServiceImplTest {
 
     @Mock
@@ -47,9 +49,9 @@ class PlayerServiceImplTest {
         Player updatedPlayer = playerService.update(newPlayerInfo);
 
         assertNotNull(updatedPlayer);
-        ArgumentCaptor<Player> captor = ArgumentCaptor.forClass(Player.class);
-        verify(repository).save(captor.capture());
-        Player passedPlayer = captor.getValue();
+        ArgumentCaptor<Player> playerCaptor = ArgumentCaptor.forClass(Player.class);
+        verify(repository).save(playerCaptor.capture());
+        Player passedPlayer = playerCaptor.getValue();
         assertAll("Check player details",
                 () -> assertEquals(1L, passedPlayer.getId()),
                 () -> assertEquals("John", passedPlayer.getFirstName()),
@@ -130,6 +132,7 @@ class PlayerServiceImplTest {
     @Test
     void deleteAll() {
         playerService.deleteAll();
+
         verify(repository).deleteAll();
         verifyNoMoreInteractions(repository);
     }
