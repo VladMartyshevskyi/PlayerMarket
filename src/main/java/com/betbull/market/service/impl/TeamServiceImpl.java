@@ -1,7 +1,6 @@
 package com.betbull.market.service.impl;
 
 import com.betbull.market.model.Team;
-import com.betbull.market.model.Team;
 import com.betbull.market.repository.TeamRepository;
 import com.betbull.market.service.TeamService;
 import org.springframework.stereotype.Service;

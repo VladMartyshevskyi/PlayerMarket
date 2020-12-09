@@ -44,7 +44,11 @@ class ContractServiceImplTest {
 
         Contract contract = contractService.transferPlayer(player, team);
 
+        assertNotNull(contract);
         assertEquals(0.0, contract.getContractFee());
+        assertEquals(player, contract.getPlayer());
+        assertEquals(team, contract.getTeam());
+        assertTrue(contract.getActive());
         verify(contractRepository, times(1)).findByPlayerIdAndActiveTrue(1L);
         verify(contractRepository, times(1)).save(contract);
         verifyNoMoreInteractions(contractRepository);
