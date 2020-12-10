@@ -28,18 +28,10 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public Player update(Player player) {
         return playerRepository.findById(player.getId()).map(current -> {
-            if (player.getFirstName() != null) {
-                current.setFirstName(player.getFirstName());
-            }
-            if (player.getLastName() != null) {
-                current.setLastName(player.getLastName());
-            }
-            if (player.getAge() != null) {
-                current.setAge(player.getAge());
-            }
-            if (player.getExperience() != null) {
-                current.setExperience(player.getExperience());
-            }
+            Optional.ofNullable(player.getFirstName()).ifPresent(current::setFirstName);
+            Optional.ofNullable(player.getLastName()).ifPresent(current::setLastName);
+            Optional.ofNullable(player.getAge()).ifPresent(current::setAge);
+            Optional.ofNullable(player.getExperience()).ifPresent(current::setExperience);
             return current;
         }).map(playerRepository::save).orElse(null);
     }
