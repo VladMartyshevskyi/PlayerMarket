@@ -3,6 +3,7 @@ package com.betbull.market.service.impl;
 import com.betbull.market.model.Team;
 import com.betbull.market.repository.TeamRepository;
 import com.betbull.market.service.TeamService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,34 +13,18 @@ import java.util.Optional;
  * This class is used to manage football teams.
  */
 @Service
+@RequiredArgsConstructor
 public class TeamServiceImpl implements TeamService {
 
     private final TeamRepository teamRepository;
 
-    /**
-     * Instantiates a new TeamService.
-     *
-     * @param teamRepository the team repository
-     */
-    public TeamServiceImpl(TeamRepository teamRepository) {
-        this.teamRepository = teamRepository;
-    }
-
     @Override
     public Team update(Team team) {
         return teamRepository.findById(team.getId()).map(current -> {
-            if (team.getTitle() != null) {
-                current.setTitle(team.getTitle());
-            }
-            if (team.getBalance() != null) {
-                current.setBalance(team.getBalance());
-            }
-            if (team.getCommissionPercent() != null) {
-                current.setCommissionPercent(team.getCommissionPercent());
-            }
-            if (team.getCountry() != null) {
-                current.setCountry(team.getCountry());
-            }
+            Optional.ofNullable(team.getTitle()).ifPresent(current::setTitle);
+            Optional.ofNullable(team.getBalance()).ifPresent(current::setBalance);
+            Optional.ofNullable(team.getCommissionPercent()).ifPresent(current::setCommissionPercent);
+            Optional.ofNullable(team.getCountry()).ifPresent(current::setCountry);
             return current;
         }).map(teamRepository::save).orElse(null);
     }

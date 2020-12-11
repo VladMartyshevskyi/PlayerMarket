@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class Team {
     @Column(nullable = false)
     @NotNull(message = "balance is mandatory")
     @PositiveOrZero(message = "balance should be 0 or positive value")
-    private Double balance;
+    private BigDecimal balance;
 
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -51,7 +52,7 @@ public class Team {
      * @param commissionPercent the commision percent
      * @param balance          the balance
      */
-    public Team(String title, String country, Integer commissionPercent, Double balance) {
+    public Team(String title, String country, Integer commissionPercent, BigDecimal balance) {
         this.title = title;
         this.country = country;
         this.commissionPercent = commissionPercent;
