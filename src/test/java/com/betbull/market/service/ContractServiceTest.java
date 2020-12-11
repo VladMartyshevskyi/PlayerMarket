@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,16 +42,16 @@ public class ContractServiceTest {
     @Test
     public void transferPlayerTest() throws IllegalTransferException {
         Player player = playerService.create(new Player("John", "Doe", 22, 19));
-        Team wales = teamService.create(new Team("Wales", "UK", 7, 200000.0));
-        Team barcelona = teamService.create(new Team("Barcelona", "Spain", 10, 150000.0));
+        Team wales = teamService.create(new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0)));
+        Team barcelona = teamService.create(new Team("Barcelona", "Spain", 10, BigDecimal.valueOf(150000.0)));
         // First contract
         Contract currentContract = contractService.transferPlayer(player, wales);
         assertTrue(currentContract.getActive());
         assertEquals(player.getId(), currentContract.getPlayer().getId());
         assertEquals(wales.getId(), currentContract.getTeam().getId());
 
-        double walesBalanceBefore = wales.getBalance();
-        double barcelonaBalanceBefore = barcelona.getBalance();
+        BigDecimal walesBalanceBefore = wales.getBalance();
+        BigDecimal barcelonaBalanceBefore = barcelona.getBalance();
 
         // Transfer player to barcelona team
         Contract contract = contractService.transferPlayer(player, barcelona);
@@ -64,18 +66,18 @@ public class ContractServiceTest {
         // Check balances
         wales = teamService.getById(wales.getId()).orElse(null);
         barcelona = teamService.getById(barcelona.getId()).orElse(null);
-        Double contractFee = contractService.calculateContractFee(player, wales);
+        BigDecimal contractFee = contractService.calculateContractFee(player, wales);
         assertNotNull(wales);
         assertNotNull(barcelona);
-        assertEquals(0, barcelona.getBalance().compareTo(barcelonaBalanceBefore - contractFee));
-        assertEquals(0, wales.getBalance().compareTo(walesBalanceBefore + contractFee));
+        assertEquals(0, barcelona.getBalance().compareTo(barcelonaBalanceBefore.subtract(contractFee)));
+        assertEquals(0, wales.getBalance().compareTo(walesBalanceBefore.add(contractFee)));
         assertEquals(contractFee, contract.getContractFee());
     }
 
     @Test
     public void transferPlayerIllegalTest() throws IllegalTransferException {
         Player player = playerService.create(new Player("John", "Doe", 22, 19));
-        Team wales = teamService.create(new Team("Wales", "UK", 7, 200000.0));
+        Team wales = teamService.create(new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0)));
         // First contract
         contractService.transferPlayer(player, wales);
         assertThrows(IllegalTransferException.class, () -> contractService.transferPlayer(player, wales));
@@ -84,8 +86,8 @@ public class ContractServiceTest {
     @Test
     public void transferPlayerNoFundsTest() throws IllegalTransferException {
         Player player = playerService.create(new Player("John", "Doe", 22, 19));
-        Team wales = teamService.create(new Team("Wales", "UK", 7, 200000.0));
-        Team barcelona = teamService.create(new Team("Barcelona", "Spain", 10, 30000.0));
+        Team wales = teamService.create(new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0)));
+        Team barcelona = teamService.create(new Team("Barcelona", "Spain", 10, BigDecimal.valueOf(30000.0)));
         // First contract
         contractService.transferPlayer(player, wales);
         assertThrows(NonSufficientFundsException.class, () -> contractService.transferPlayer(player, barcelona));
@@ -94,19 +96,22 @@ public class ContractServiceTest {
     @Test
     public void calculateContractFeeTest() {
         Player player = new Player("John", "Doe", 22, 20);
-        Team team = new Team("Wales", "UK", 10, 200000.0);
-        Double calculatedFee = contractService.calculateContractFee(player, team);
-        double transferFee = 1.0 * player.getExperience() * 100000 / player.getAge();
-        double teamCommission = 1.0 * team.getCommissionPercent() / 100 * transferFee;
-        double contractFee = transferFee + teamCommission;
+        Team team = new Team("Wales", "UK", 10, BigDecimal.valueOf(200000.0));
+        BigDecimal calculatedFee = contractService.calculateContractFee(player, team);
+        BigDecimal transferFee =
+                BigDecimal.valueOf(player.getExperience())
+                        .multiply(BigDecimal.valueOf(100000))
+                        .divide(BigDecimal.valueOf(player.getAge()), 2, RoundingMode.CEILING);
+        BigDecimal teamCommission = BigDecimal.valueOf(team.getCommissionPercent()).divide(BigDecimal.valueOf(100), 2, RoundingMode.CEILING).multiply(transferFee);
+        BigDecimal contractFee = transferFee.add(teamCommission);
         assertEquals(0, calculatedFee.compareTo(contractFee));
     }
 
     @Test
     public void getContractsByPlayerId() throws IllegalTransferException{
         Player player = playerService.create(new Player("John", "Doe", 22, 19));
-        Team wales = teamService.create(new Team("Wales", "UK", 7, 200000.0));
-        Team barcelona = teamService.create(new Team("Barcelona", "Spain", 10, 150000.0));
+        Team wales = teamService.create(new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0)));
+        Team barcelona = teamService.create(new Team("Barcelona", "Spain", 10, BigDecimal.valueOf(150000.0)));
         // First contract
         Contract currentContract = contractService.transferPlayer(player, wales);
         Contract newContract = contractService.transferPlayer(player, barcelona);
@@ -117,8 +122,8 @@ public class ContractServiceTest {
     @Test
     public void getTeamsByPlayerId() throws IllegalTransferException {
         Player player = playerService.create(new Player("John", "Doe", 22, 19));
-        Team wales = teamService.create(new Team("Wales", "UK", 7, 200000.0));
-        Team barcelona = teamService.create(new Team("Barcelona", "Spain", 10, 150000.0));
+        Team wales = teamService.create(new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0)));
+        Team barcelona = teamService.create(new Team("Barcelona", "Spain", 10, BigDecimal.valueOf(150000.0)));
         // First contract
         Contract currentContract = contractService.transferPlayer(player, wales);
         Contract newContract = contractService.transferPlayer(player, barcelona);

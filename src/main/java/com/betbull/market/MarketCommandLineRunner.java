@@ -8,6 +8,8 @@ import com.betbull.market.service.TeamService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 /**
  * The MarketCommandLineRunner is used to fill the database with testing data.
  */
@@ -35,9 +37,9 @@ public class MarketCommandLineRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Team wales = teamService.create(new Team("Wales", "UK", 7, 200000.0));
-        Team barcelona = teamService.create(new Team("Barcelona", "Spain", 10, 150000.0));
-        Team atalanta = teamService.create(new Team("Atalanta", "Italy", 9, 190000.0));
+        Team wales = teamService.create(new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0)));
+        Team barcelona = teamService.create(new Team("Barcelona", "Spain", 10, BigDecimal.valueOf(150000.0)));
+        Team atalanta = teamService.create(new Team("Atalanta", "Italy", 9, BigDecimal.valueOf(190000.0)));
 
         Player john = playerService.create(new Player("John", "Doe", 25, 24));
         Player mike = playerService.create(new Player("Mike", "Renault", 28, 11));

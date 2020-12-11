@@ -15,6 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -40,12 +42,12 @@ class ContractServiceImplTest {
     void transferPlayerWithoutContract() throws IllegalTransferException {
         Player player = new Player("John", "Doe", 24, 18);
         player.setId(1L);
-        Team team = new Team("Barcelona", "Spain", 5, 100000.0);
+        Team team = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
 
         Contract contract = contractService.transferPlayer(player, team);
 
         assertNotNull(contract);
-        assertEquals(0.0, contract.getContractFee());
+        assertEquals(BigDecimal.ZERO, contract.getContractFee());
         assertEquals(player, contract.getPlayer());
         assertEquals(team, contract.getTeam());
         assertTrue(contract.getActive());
@@ -58,10 +60,10 @@ class ContractServiceImplTest {
     void transferPlayerWithContract() throws IllegalTransferException {
         Player player = new Player("John", "Doe", 24, 10);
         player.setId(1L);
-        Team oldTeam = new Team("Barcelona", "Spain", 5, 100000.0);
+        Team oldTeam = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
         oldTeam.setId(10L);
-        Contract oldContract = new Contract(player, oldTeam, 20000.0);
-        Team newTeam = new Team("Real Madrid", "Spain", 3,200000.0);
+        Contract oldContract = new Contract(player, oldTeam, BigDecimal.valueOf(20000.0));
+        Team newTeam = new Team("Real Madrid", "Spain", 3,BigDecimal.valueOf(200000.0));
         newTeam.setId(11L);
         when(contractRepository.findByPlayerIdAndActiveTrue(1L)).thenReturn(oldContract);
 
@@ -72,12 +74,12 @@ class ContractServiceImplTest {
                 () -> assertNotNull(contract),
                 () -> assertEquals(newTeam, contract.getTeam()),
                 () -> assertEquals(player, contract.getPlayer()),
-                () -> assertTrue(contract.getContractFee() > 0),
+                () -> assertTrue(contract.getContractFee().compareTo(BigDecimal.ZERO) > 0),
                 () -> assertFalse(oldContract.getActive()),
                 () -> assertTrue(contract.getActive()));
         assertAll("Check balances changes",
-                () -> assertTrue(oldTeam.getBalance() > 100000.0),
-                () -> assertTrue(newTeam.getBalance() < 200000.0));
+                () -> assertTrue(oldTeam.getBalance().compareTo(BigDecimal.valueOf(100000.0)) > 0),
+                () -> assertTrue(newTeam.getBalance().compareTo(BigDecimal.valueOf(200000.0)) < 0));
         // Check invocation order
         InOrder inOrder = inOrder(contractRepository);
         inOrder.verify(contractRepository).save(oldContract);
@@ -88,9 +90,9 @@ class ContractServiceImplTest {
     void transferPlayerIllegalTransferException() {
         Player player = new Player("John", "Doe", 24, 10);
         player.setId(1L);
-        Team oldTeam = new Team("Barcelona", "Spain", 5, 100000.0);
+        Team oldTeam = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
         oldTeam.setId(10L);
-        Contract oldContract = new Contract(player, oldTeam, 20000.0);
+        Contract oldContract = new Contract(player, oldTeam, BigDecimal.valueOf(20000.0));
         when(contractRepository.findByPlayerIdAndActiveTrue(1L)).thenReturn(oldContract);
 
         assertThrows(IllegalTransferException.class, () -> contractService.transferPlayer(player, oldTeam));
@@ -99,22 +101,25 @@ class ContractServiceImplTest {
 
     @Test
     void calculateContractFee() {
-        Player player = new Player("John", "Doe", 22, 20);
-        Team team = new Team("Wales", "UK", 10, 200000.0);
-        Double calculatedFee = contractService.calculateContractFee(player, team);
-        double transferFee = 1.0 * player.getExperience() * 100000 / player.getAge();
-        double teamCommission = 1.0 * team.getCommissionPercent() / 100 * transferFee;
-        double contractFee = transferFee + teamCommission;
+        Player player = new Player("John", "Doe", 20, 22);
+        Team team = new Team("Wales", "UK", 10, BigDecimal.valueOf(200000.0));
+        BigDecimal calculatedFee = contractService.calculateContractFee(player, team);
+        BigDecimal transferFee =
+                BigDecimal.valueOf(player.getExperience())
+                        .multiply(BigDecimal.valueOf(100000))
+                        .divide(BigDecimal.valueOf(player.getAge()), 2, RoundingMode.CEILING);
+        BigDecimal teamCommission = BigDecimal.valueOf(team.getCommissionPercent()).divide(BigDecimal.valueOf(100), 2, RoundingMode.CEILING).multiply(transferFee);
+        BigDecimal contractFee = transferFee.add(teamCommission);
         assertEquals(0, calculatedFee.compareTo(contractFee));
     }
 
     @Test
     void getContractsByPlayerId() {
         Player player = new Player("John", "Doe", 24, 10);
-        Team barcelona = new Team("Barcelona", "Spain", 5, 100000.0);
-        Team real = new Team("Real Madrid", "Spain", 3,200000.0);
-        Contract contractBarcelona = new Contract(player, barcelona, 200000.0);
-        Contract contractReal = new Contract(player, real, 10000.0);
+        Team barcelona = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
+        Team real = new Team("Real Madrid", "Spain", 3,BigDecimal.valueOf(200000.0));
+        Contract contractBarcelona = new Contract(player, barcelona, BigDecimal.valueOf(200000.0));
+        Contract contractReal = new Contract(player, real, BigDecimal.valueOf(10000.0));
         when(contractRepository.findByPlayerId(1L)).thenReturn(Arrays.asList(contractBarcelona, contractReal));
 
         List<Contract> contracts = contractService.getContractsByPlayerId(1L);
@@ -131,10 +136,10 @@ class ContractServiceImplTest {
     @Test
     void getTeamsByPlayerId() {
         Player player = new Player("John", "Doe", 24, 10);
-        Team barcelona = new Team("Barcelona", "Spain", 5, 100000.0);
-        Team real = new Team("Real Madrid", "Spain", 3,200000.0);
-        Contract contractBarcelona = new Contract(player, barcelona, 200000.0);
-        Contract contractReal = new Contract(player, real, 10000.0);
+        Team barcelona = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
+        Team real = new Team("Real Madrid", "Spain", 3,BigDecimal.valueOf(200000.0));
+        Contract contractBarcelona = new Contract(player, barcelona, BigDecimal.valueOf(200000.0));
+        Contract contractReal = new Contract(player, real, BigDecimal.valueOf(10000.0));
         when(contractRepository.findByPlayerId(1L)).thenReturn(Arrays.asList(contractBarcelona, contractReal));
 
         List<Team> teams = contractService.getTeamsByPlayerId(1L);
@@ -150,7 +155,7 @@ class ContractServiceImplTest {
 
     @Test
     void getContractById() {
-        when(contractRepository.findById(1L)).thenReturn(Optional.of(new Contract(null, null, 0.0)));
+        when(contractRepository.findById(1L)).thenReturn(Optional.of(new Contract(null, null, BigDecimal.valueOf(0.0))));
 
         assertNotNull(contractService.getContractById(1L).orElse(null));
         assertEquals(Optional.empty(), contractService.getContractById(2L));
@@ -158,25 +163,25 @@ class ContractServiceImplTest {
 
     @Test
     void transferFunds() throws NonSufficientFundsException {
-        Team barcelona = new Team("Barcelona", "Spain", 5, 100000.0);
-        Team real = new Team("Real Madrid", "Spain", 3,200000.0);
+        Team barcelona = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
+        Team real = new Team("Real Madrid", "Spain", 3,BigDecimal.valueOf(200000.0));
 
-        contractService.transferFunds(barcelona, real, 50000);
+        contractService.transferFunds(barcelona, real, BigDecimal.valueOf(50000));
 
-        assertEquals(0, barcelona.getBalance().compareTo(50000.0));
-        assertEquals(0, real.getBalance().compareTo(250000.0));
+        assertEquals(0, barcelona.getBalance().compareTo(BigDecimal.valueOf(50000.0)));
+        assertEquals(0, real.getBalance().compareTo(BigDecimal.valueOf(250000.0)));
         verify(teamService).update(barcelona);
         verify(teamService).update(real);
     }
 
     @Test
     void transferFundsNonSufficientFundsException() {
-        Team barcelona = new Team("Barcelona", "Spain", 5, 100000.0);
-        Team real = new Team("Real Madrid", "Spain", 3,200000.0);
+        Team barcelona = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
+        Team real = new Team("Real Madrid", "Spain", 3,BigDecimal.valueOf(200000.0));
 
-        assertThrows(NonSufficientFundsException.class, () -> contractService.transferFunds(barcelona, real, 120000));
-        assertEquals(0, barcelona.getBalance().compareTo(100000.0));
-        assertEquals(0, real.getBalance().compareTo(200000.0));
+        assertThrows(NonSufficientFundsException.class, () -> contractService.transferFunds(barcelona, real, BigDecimal.valueOf(120000)));
+        assertEquals(0, barcelona.getBalance().compareTo(BigDecimal.valueOf(100000.0)));
+        assertEquals(0, real.getBalance().compareTo(BigDecimal.valueOf(200000.0)));
         verifyNoInteractions(teamService);
     }
 

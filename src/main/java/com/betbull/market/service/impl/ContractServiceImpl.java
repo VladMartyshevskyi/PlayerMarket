@@ -8,9 +8,13 @@ import com.betbull.market.model.Team;
 import com.betbull.market.repository.ContractRepository;
 import com.betbull.market.service.ContractService;
 import com.betbull.market.service.TeamService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,27 +23,20 @@ import java.util.stream.Collectors;
  * The type Contract service used to manage contracts between football players and teams.
  */
 @Service
+@RequiredArgsConstructor
 public class ContractServiceImpl implements ContractService {
+
+    private static final BigDecimal CONTRACT_FEE_MULTIPLIER = BigDecimal.valueOf(100000);
+    private static final BigDecimal ONE_HUNDRED_PERCENTS = BigDecimal.valueOf(100);
 
     private final ContractRepository contractRepository;
     private final TeamService teamService;
-
-    /**
-     * Instantiates a new Contract service.
-     *
-     * @param contractRepository the contract repository
-     * @param teamService        the team service
-     */
-    public ContractServiceImpl(ContractRepository contractRepository, TeamService teamService) {
-        this.contractRepository = contractRepository;
-        this.teamService = teamService;
-    }
 
     @Override
     @Transactional
     public Contract transferPlayer(Player player, Team team) throws IllegalTransferException {
         Contract currentContract = contractRepository.findByPlayerIdAndActiveTrue(player.getId());
-        double contractFee = 0.0;
+        BigDecimal contractFee = BigDecimal.ZERO;
         if (currentContract != null) {
             Team currentTeam = currentContract.getTeam();
             if (currentTeam.getId().equals(team.getId())) {
@@ -56,10 +53,13 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public double calculateContractFee(Player player, Team team) {
-        double transferFee = 1.0 * player.getExperience() * 100000 / player.getAge();
-        double teamCommission = 1.0 * team.getCommissionPercent() / 100 * transferFee;
-        return transferFee + teamCommission;
+    public BigDecimal calculateContractFee(Player player, Team team) {
+        BigDecimal transferFee =
+                BigDecimal.valueOf(player.getExperience())
+                .multiply(CONTRACT_FEE_MULTIPLIER)
+                .divide(BigDecimal.valueOf(player.getAge()), 2, RoundingMode.CEILING);
+        BigDecimal teamCommission = BigDecimal.valueOf(team.getCommissionPercent()).divide(ONE_HUNDRED_PERCENTS, 2, RoundingMode.CEILING).multiply(transferFee);
+        return transferFee.add(teamCommission).setScale(2, RoundingMode.CEILING);
     }
 
     @Override
@@ -86,10 +86,10 @@ public class ContractServiceImpl implements ContractService {
      * @throws NonSufficientFundsException the non sufficient funds exception
      */
     @Transactional
-    protected void transferFunds(Team teamFrom, Team teamTo, double amount) throws NonSufficientFundsException {
+    protected void transferFunds(Team teamFrom, Team teamTo, BigDecimal amount) throws NonSufficientFundsException {
         if (teamFrom.getBalance().compareTo(amount) >= 0) {
-            teamFrom.setBalance(teamFrom.getBalance() - amount);
-            teamTo.setBalance(teamTo.getBalance() + amount);
+            teamFrom.setBalance(teamFrom.getBalance().subtract(amount));
+            teamTo.setBalance(teamTo.getBalance().add(amount));
             teamService.update(teamFrom);
             teamService.update(teamTo);
         } else {

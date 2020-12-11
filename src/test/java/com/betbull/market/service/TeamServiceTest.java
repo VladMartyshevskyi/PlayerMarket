@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +31,7 @@ public class TeamServiceTest {
 
     @Test
     public void createTest() {
-        Team team = new Team("Wales", "UK", 7, 200000.0);
+        Team team = new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0));
         Team createdTeam = teamService.create(team);
         assertNotNull(createdTeam);
         assertEquals(team.getTitle(), createdTeam.getTitle());
@@ -42,10 +43,10 @@ public class TeamServiceTest {
 
     @Test
     public void updateTest() {
-       Team team = teamService.create(new Team("Wales", "UK", 7, 200000.0));
+       Team team = teamService.create(new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0)));
        team.setCountry("USA");
        team.setTitle("Texas");
-       team.setBalance(150000.0);
+       team.setBalance(BigDecimal.valueOf(150000.0));
        teamService.update(team);
        Team updated = teamService.getById(team.getId()).orElse(null);
        assertNotNull(updated);
@@ -56,14 +57,14 @@ public class TeamServiceTest {
 
     @Test
     public void deleteByIdTest() {
-        Team team = teamService.create(new Team("Wales", "UK", 7, 200000.0));
+        Team team = teamService.create(new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0)));
         teamService.deleteById(team.getId());
         assertEquals(Optional.empty(), teamService.getById(team.getId()));
     }
 
     @Test
     public void getByIdTest() {
-        Team team = teamService.create(new Team("Wales", "UK", 7, 200000.0));
+        Team team = teamService.create(new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0)));
         Team foundTeam = teamService.getById(team.getId()).orElse(null);
         assertNotNull(foundTeam);
         assertEquals(team.getId(), foundTeam.getId());
@@ -73,24 +74,24 @@ public class TeamServiceTest {
 
     @Test
     public void getAllTest() {
-        Team wales = teamService.create(new Team("Wales", "UK", 7, 200000.0));
-        Team barcelona = teamService.create(new Team("Barcelona", "Spain", 10, 150000.0));
-        Team atalanta = teamService.create(new Team("Atalanta", "Italy", 9, 190000.0));
+        Team wales = teamService.create(new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0)));
+        Team barcelona = teamService.create(new Team("Barcelona", "Spain", 10, BigDecimal.valueOf(150000.0)));
+        Team atalanta = teamService.create(new Team("Atalanta", "Italy", 9, BigDecimal.valueOf(190000.0)));
         List<Long> teamsIds = teamService.getAll().stream().map(Team::getId).collect(Collectors.toList());
         assertTrue(teamsIds.containsAll(Arrays.asList(wales.getId(), barcelona.getId(), atalanta.getId())));
     }
 
     @Test
     public void existsByIdTest() {
-        Team team = teamService.create(new Team("Wales", "UK", 7, 200000.0));
+        Team team = teamService.create(new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0)));
         assertTrue(teamService.existsById(team.getId()));
         assertFalse(teamService.existsById(10000L));
     }
 
     @Test
     public void deleteAllTest() {
-        teamService.create(new Team("Wales", "UK", 7, 200000.0));
-        teamService.create(new Team("Barcelona", "Spain", 10, 150000.0));
+        teamService.create(new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0)));
+        teamService.create(new Team("Barcelona", "Spain", 10, BigDecimal.valueOf(150000.0)));
         teamService.deleteAll();
         assertEquals(Collections.emptyList(), teamService.getAll());
     }

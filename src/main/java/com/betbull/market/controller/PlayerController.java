@@ -8,6 +8,7 @@ import com.betbull.market.model.Team;
 import com.betbull.market.service.ContractService;
 import com.betbull.market.service.PlayerService;
 import com.betbull.market.service.TeamService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,25 +21,13 @@ import java.util.Optional;
  * The PlayerController is a REST API controller for managing football players.
  */
 @RestController
+@RequiredArgsConstructor
 public class PlayerController {
 
     private final PlayerService playerService;
 
     private final ContractService contractService;
     private final TeamService teamService;
-
-    /**
-     * Instantiates a new PlayerController.
-     *
-     * @param playerService   the player service
-     * @param contractService the contract service
-     * @param teamService     the team service
-     */
-    public PlayerController(PlayerService playerService, ContractService contractService, TeamService teamService) {
-        this.playerService = playerService;
-        this.contractService = contractService;
-        this.teamService = teamService;
-    }
 
     /**
      * Gets all players.

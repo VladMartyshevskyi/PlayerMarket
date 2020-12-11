@@ -1,8 +1,8 @@
 package com.betbull.market.service.impl;
 
+import com.betbull.market.infra.ProcessedBean;
 import com.betbull.market.model.Team;
 import com.betbull.market.repository.TeamRepository;
-import com.betbull.market.infra.ProcessedBean;
 import com.betbull.market.service.PlayerService;
 import com.betbull.market.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class TeamServiceImpl implements TeamService {
     static {
         System.out.println("TeamServiceImpl static initialization");
     }
-
+    
     /**
      * Instantiates a new TeamService.
      *
@@ -39,6 +39,7 @@ public class TeamServiceImpl implements TeamService {
     public void setPlayerService(PlayerService playerService) {
         System.out.println("TeamServiceImpl setter injection of playerService");
     }
+
 
     @Override
     public Team update(Team team) {

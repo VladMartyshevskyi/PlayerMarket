@@ -2,6 +2,7 @@ package com.betbull.market.controller;
 
 import com.betbull.market.model.Team;
 import com.betbull.market.service.TeamService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,18 +15,10 @@ import java.util.Optional;
  * The TeamController is a REST API controller for managing football teams.
  */
 @RestController
+@RequiredArgsConstructor
 public class TeamController {
 
     private final TeamService teamService;
-
-    /**
-     * Instantiates a new TeamController.
-     *
-     * @param teamService the team service
-     */
-    public TeamController(TeamService teamService) {
-        this.teamService = teamService;
-    }
 
     /**
      * Gets all teams.

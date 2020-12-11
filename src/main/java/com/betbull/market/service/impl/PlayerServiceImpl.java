@@ -3,6 +3,7 @@ package com.betbull.market.service.impl;
 import com.betbull.market.model.Player;
 import com.betbull.market.repository.PlayerRepository;
 import com.betbull.market.service.PlayerService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,18 +13,10 @@ import java.util.Optional;
  * This class is used to manage football players.
  */
 @Service
+@RequiredArgsConstructor
 public class PlayerServiceImpl implements PlayerService {
 
     private final PlayerRepository playerRepository;
-
-    /**
-     * Instantiates a new PlayerService.
-     *
-     * @param playerRepository the player repository
-     */
-    public PlayerServiceImpl(PlayerRepository playerRepository) {
-        this.playerRepository = playerRepository;
-    }
 
     @Override
     public Player update(Player player) {

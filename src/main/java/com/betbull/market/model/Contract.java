@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 /**
  * The Contract represents a contract between football player and team.
@@ -29,7 +30,7 @@ public class Contract {
     private Boolean active;
 
     @Column(nullable = false)
-    private Double contractFee;
+    private BigDecimal contractFee;
 
     /**
      * Instantiates a new Contract.
@@ -38,7 +39,7 @@ public class Contract {
      * @param team          the team
      * @param contractFee   the contractFee
      */
-    public Contract(Player player, Team team, Double contractFee) {
+    public Contract(Player player, Team team, BigDecimal contractFee) {
         this.player = player;
         this.team = team;
         this.active = true;

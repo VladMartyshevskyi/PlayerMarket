@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +36,7 @@ class TeamServiceImplTest {
 
     @Test
     void create() {
-        Team team = new Team("Barcelona", "Spain", 5, 200000.0);
+        Team team = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(200000.0));
         given(repository.save(team)).willReturn(team);
 
         Team saved = teamService.create(team);
@@ -46,7 +47,7 @@ class TeamServiceImplTest {
 
     @Test
     void updatePartOfEntity() {
-        Team original = new Team("Barcelona", "Spain", 5, 100000.0);
+        Team original = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
         original.setId(1L);
         given(repository.findById(1L)).willReturn(Optional.of(original));
         given(repository.save(any(Team.class))).will(invocationOnMock -> invocationOnMock.getArgument(0));
@@ -64,18 +65,18 @@ class TeamServiceImplTest {
                 () -> assertEquals("Dynamo", passedTeam.getTitle()),
                 () -> assertEquals("Spain", passedTeam.getCountry()),
                 () -> assertEquals(7, passedTeam.getCommissionPercent()),
-                () -> assertEquals(0, passedTeam.getBalance().compareTo(100000.0)));
+                () -> assertEquals(0, passedTeam.getBalance().compareTo(BigDecimal.valueOf(100000.0))));
 
         assertEquals(passedTeam, updatedTeam);
     }
 
     @Test
     void updateFullEntity() {
-        Team original = new Team("Barcelona", "Spain", 5, 100000.0);
+        Team original = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
         original.setId(1L);
         given(repository.findById(1L)).willReturn(Optional.of(original));
         given(repository.save(any(Team.class))).will(invocationOnMock -> invocationOnMock.getArgument(0));
-        Team newTeamInfo = new Team("Dynamo", "Ukraine", 7, 120000.0);
+        Team newTeamInfo = new Team("Dynamo", "Ukraine", 7, BigDecimal.valueOf(120000.0));
         newTeamInfo.setId(1L);
         
         Team updated = teamService.update(newTeamInfo);
@@ -104,7 +105,7 @@ class TeamServiceImplTest {
 
     @Test
     void getById() {
-        Team team = new Team("Barcelona", "Spain", 5, 100000.0);
+        Team team = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
         team.setId(1L);
         given(repository.findById(1L)).willReturn(Optional.of(team));
 
@@ -116,8 +117,8 @@ class TeamServiceImplTest {
 
     @Test
     void getAll() {
-        Team barcelona = new Team("Barcelona", "Spain", 5, 100000.0);
-        Team dynamo = new Team("Dynamo", "Ukraine", 3, 120000.0);
+        Team barcelona = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
+        Team dynamo = new Team("Dynamo", "Ukraine", 3, BigDecimal.valueOf(120000.0));
         given(repository.findAll()).willReturn(Arrays.asList(barcelona, dynamo));
 
         List<Team> allTeams = teamService.getAll();
