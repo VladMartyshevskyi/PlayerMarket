@@ -1,7 +1,8 @@
 package com.betbull.market.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -47,10 +48,10 @@ public class Team {
     /**
      * Instantiates a new Team.
      *
-     * @param title            the title
-     * @param country          the country
+     * @param title             the title
+     * @param country           the country
      * @param commissionPercent the commision percent
-     * @param balance          the balance
+     * @param balance           the balance
      */
     public Team(String title, String country, Integer commissionPercent, BigDecimal balance) {
         this.title = title;

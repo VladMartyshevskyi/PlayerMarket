@@ -43,16 +43,16 @@ public class TeamServiceTest {
 
     @Test
     public void updateTest() {
-       Team team = teamService.create(new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0)));
-       team.setCountry("USA");
-       team.setTitle("Texas");
-       team.setBalance(BigDecimal.valueOf(150000.0));
-       teamService.update(team);
-       Team updated = teamService.getById(team.getId()).orElse(null);
-       assertNotNull(updated);
-       assertEquals(team.getCountry(), updated.getCountry());
-       assertEquals(team.getTitle(), updated.getTitle());
-       assertEquals(0, team.getBalance().compareTo(updated.getBalance()));
+        Team team = teamService.create(new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0)));
+        team.setCountry("USA");
+        team.setTitle("Texas");
+        team.setBalance(BigDecimal.valueOf(150000.0));
+        teamService.update(team);
+        Team updated = teamService.getById(team.getId()).orElse(null);
+        assertNotNull(updated);
+        assertEquals(team.getCountry(), updated.getCountry());
+        assertEquals(team.getTitle(), updated.getTitle());
+        assertEquals(0, team.getBalance().compareTo(updated.getBalance()));
     }
 
     @Test

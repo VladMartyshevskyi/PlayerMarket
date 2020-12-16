@@ -7,6 +7,7 @@ import com.betbull.market.model.Player;
 import com.betbull.market.model.Team;
 import com.betbull.market.repository.ContractRepository;
 import com.betbull.market.service.TeamService;
+import com.betbull.market.service.mail.MailService;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +35,9 @@ class ContractServiceImplTest {
 
     @Mock
     ContractRepository contractRepository;
+
+    @Mock
+    MailService mailService;
 
     @InjectMocks
     ContractServiceImpl contractService;
@@ -63,7 +67,7 @@ class ContractServiceImplTest {
         Team oldTeam = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
         oldTeam.setId(10L);
         Contract oldContract = new Contract(player, oldTeam, BigDecimal.valueOf(20000.0));
-        Team newTeam = new Team("Real Madrid", "Spain", 3,BigDecimal.valueOf(200000.0));
+        Team newTeam = new Team("Real Madrid", "Spain", 3, BigDecimal.valueOf(200000.0));
         newTeam.setId(11L);
         when(contractRepository.findByPlayerIdAndActiveTrue(1L)).thenReturn(oldContract);
 
@@ -117,7 +121,7 @@ class ContractServiceImplTest {
     void getContractsByPlayerId() {
         Player player = new Player("John", "Doe", 24, 10);
         Team barcelona = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
-        Team real = new Team("Real Madrid", "Spain", 3,BigDecimal.valueOf(200000.0));
+        Team real = new Team("Real Madrid", "Spain", 3, BigDecimal.valueOf(200000.0));
         Contract contractBarcelona = new Contract(player, barcelona, BigDecimal.valueOf(200000.0));
         Contract contractReal = new Contract(player, real, BigDecimal.valueOf(10000.0));
         when(contractRepository.findByPlayerId(1L)).thenReturn(Arrays.asList(contractBarcelona, contractReal));
@@ -137,7 +141,7 @@ class ContractServiceImplTest {
     void getTeamsByPlayerId() {
         Player player = new Player("John", "Doe", 24, 10);
         Team barcelona = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
-        Team real = new Team("Real Madrid", "Spain", 3,BigDecimal.valueOf(200000.0));
+        Team real = new Team("Real Madrid", "Spain", 3, BigDecimal.valueOf(200000.0));
         Contract contractBarcelona = new Contract(player, barcelona, BigDecimal.valueOf(200000.0));
         Contract contractReal = new Contract(player, real, BigDecimal.valueOf(10000.0));
         when(contractRepository.findByPlayerId(1L)).thenReturn(Arrays.asList(contractBarcelona, contractReal));
@@ -164,7 +168,7 @@ class ContractServiceImplTest {
     @Test
     void transferFunds() throws NonSufficientFundsException {
         Team barcelona = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
-        Team real = new Team("Real Madrid", "Spain", 3,BigDecimal.valueOf(200000.0));
+        Team real = new Team("Real Madrid", "Spain", 3, BigDecimal.valueOf(200000.0));
 
         contractService.transferFunds(barcelona, real, BigDecimal.valueOf(50000));
 
@@ -177,7 +181,7 @@ class ContractServiceImplTest {
     @Test
     void transferFundsNonSufficientFundsException() {
         Team barcelona = new Team("Barcelona", "Spain", 5, BigDecimal.valueOf(100000.0));
-        Team real = new Team("Real Madrid", "Spain", 3,BigDecimal.valueOf(200000.0));
+        Team real = new Team("Real Madrid", "Spain", 3, BigDecimal.valueOf(200000.0));
 
         assertThrows(NonSufficientFundsException.class, () -> contractService.transferFunds(barcelona, real, BigDecimal.valueOf(120000)));
         assertEquals(0, barcelona.getBalance().compareTo(BigDecimal.valueOf(100000.0)));

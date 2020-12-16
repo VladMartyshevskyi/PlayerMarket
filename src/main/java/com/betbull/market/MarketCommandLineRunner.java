@@ -29,7 +29,7 @@ public class MarketCommandLineRunner implements CommandLineRunner {
      * @param playerService   the player service
      * @param contractService the contract service
      */
-    public MarketCommandLineRunner (TeamService teamService, PlayerService playerService, ContractService contractService) {
+    public MarketCommandLineRunner(TeamService teamService, PlayerService playerService, ContractService contractService) {
         this.teamService = teamService;
         this.playerService = playerService;
         this.contractService = contractService;

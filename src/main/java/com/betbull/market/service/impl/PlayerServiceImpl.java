@@ -36,15 +36,17 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public void deleteById(Long id)  {
+    public void deleteById(Long id) {
         if (playerRepository.existsById(id)) {
             playerRepository.deleteById(id);
         }
     }
+
     @Override
     public Optional<Player> getById(Long id) {
         return playerRepository.findById(id);
     }
+
     @Override
     public List<Player> getAll() {
         return (List<Player>) playerRepository.findAll();

@@ -67,7 +67,7 @@ public class TeamController {
      * @return the team
      */
     @PutMapping("/teams/{id}")
-    public Team update(@PathVariable("id") Long id, @RequestBody Team team)  {
+    public Team update(@PathVariable("id") Long id, @RequestBody Team team) {
         team.setId(id);
         if (teamService.existsById(id)) {
             return teamService.update(team);

@@ -78,7 +78,7 @@ class TeamServiceImplTest {
         given(repository.save(any(Team.class))).will(invocationOnMock -> invocationOnMock.getArgument(0));
         Team newTeamInfo = new Team("Dynamo", "Ukraine", 7, BigDecimal.valueOf(120000.0));
         newTeamInfo.setId(1L);
-        
+
         Team updated = teamService.update(newTeamInfo);
 
         assertNotNull(updated);

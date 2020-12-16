@@ -108,7 +108,7 @@ public class ContractServiceTest {
     }
 
     @Test
-    public void getContractsByPlayerId() throws IllegalTransferException{
+    public void getContractsByPlayerId() throws IllegalTransferException {
         Player player = playerService.create(new Player("John", "Doe", 22, 19));
         Team wales = teamService.create(new Team("Wales", "UK", 7, BigDecimal.valueOf(200000.0)));
         Team barcelona = teamService.create(new Team("Barcelona", "Spain", 10, BigDecimal.valueOf(150000.0)));

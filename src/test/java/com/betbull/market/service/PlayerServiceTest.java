@@ -41,16 +41,16 @@ public class PlayerServiceTest {
 
     @Test
     public void updateTest() {
-       Player player = playerService.create(new Player("John", "Doe", 22, 19));
-       player.setExperience(24);
-       player.setFirstName("James");
-       player.setLastName("Smith");
-       playerService.update(player);
-       Player updated = playerService.getById(player.getId()).orElse(null);
-       assertNotNull(updated);
-       assertEquals(player.getExperience(), updated.getExperience());
-       assertEquals(player.getFirstName(), updated.getFirstName());
-       assertEquals(player.getLastName(), updated.getLastName());
+        Player player = playerService.create(new Player("John", "Doe", 22, 19));
+        player.setExperience(24);
+        player.setFirstName("James");
+        player.setLastName("Smith");
+        playerService.update(player);
+        Player updated = playerService.getById(player.getId()).orElse(null);
+        assertNotNull(updated);
+        assertEquals(player.getExperience(), updated.getExperience());
+        assertEquals(player.getFirstName(), updated.getFirstName());
+        assertEquals(player.getLastName(), updated.getLastName());
     }
 
     @Test

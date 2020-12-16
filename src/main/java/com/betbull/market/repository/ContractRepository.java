@@ -10,8 +10,7 @@ import java.util.List;
  * The interface ContractRepository declares methods for managing contracts in the database.
  */
 @Repository
-public interface ContractRepository extends CrudRepository<Contract, Long>
-{
+public interface ContractRepository extends CrudRepository<Contract, Long> {
     /**
      * Find by player id and active true contract.
      *

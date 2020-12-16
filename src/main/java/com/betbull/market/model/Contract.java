@@ -35,9 +35,9 @@ public class Contract {
     /**
      * Instantiates a new Contract.
      *
-     * @param player        the player
-     * @param team          the team
-     * @param contractFee   the contractFee
+     * @param player      the player
+     * @param team        the team
+     * @param contractFee the contractFee
      */
     public Contract(Player player, Team team, BigDecimal contractFee) {
         this.player = player;

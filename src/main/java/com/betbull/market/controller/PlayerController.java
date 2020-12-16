@@ -46,13 +46,13 @@ public class PlayerController {
      * @return the player
      */
     @GetMapping("/players/{id}")
-    public Player get(@PathVariable(name = "id") Long id)  {
-       Optional<Player> player = playerService.getById(id);
-       if (player.isPresent()) {
-           return player.get();
-       } else {
-           throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No such player");
-       }
+    public Player get(@PathVariable(name = "id") Long id) {
+        Optional<Player> player = playerService.getById(id);
+        if (player.isPresent()) {
+            return player.get();
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No such player");
+        }
     }
 
     /**
@@ -62,7 +62,7 @@ public class PlayerController {
      * @return the contracts
      */
     @GetMapping("/players/{id}/contracts")
-    public List<Contract> getContracts(@PathVariable(name = "id") Long id)  {
+    public List<Contract> getContracts(@PathVariable(name = "id") Long id) {
         return contractService.getContractsByPlayerId(id);
     }
 
@@ -73,7 +73,7 @@ public class PlayerController {
      * @return the teams
      */
     @GetMapping("/players/{id}/teams")
-    public List<Team> getTeams(@PathVariable(name = "id") Long id)  {
+    public List<Team> getTeams(@PathVariable(name = "id") Long id) {
         return contractService.getTeamsByPlayerId(id);
     }
 
@@ -128,7 +128,7 @@ public class PlayerController {
             return playerService.update(player);
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No such player");
-     }
+    }
 
     /**
      * Delete player.

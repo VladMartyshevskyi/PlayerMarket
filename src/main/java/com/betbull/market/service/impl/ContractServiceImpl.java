@@ -8,8 +8,9 @@ import com.betbull.market.model.Team;
 import com.betbull.market.repository.ContractRepository;
 import com.betbull.market.service.ContractService;
 import com.betbull.market.service.TeamService;
-import lombok.RequiredArgsConstructor;
+import com.betbull.market.service.mail.MailService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,7 +24,6 @@ import java.util.stream.Collectors;
  * The type Contract service used to manage contracts between football players and teams.
  */
 @Service
-@RequiredArgsConstructor
 public class ContractServiceImpl implements ContractService {
 
     private static final BigDecimal CONTRACT_FEE_MULTIPLIER = BigDecimal.valueOf(100000);
@@ -31,6 +31,22 @@ public class ContractServiceImpl implements ContractService {
 
     private final ContractRepository contractRepository;
     private final TeamService teamService;
+    private final MailService mailService;
+
+    /**
+     * Instatiates ContractServiceImpl
+     * @param contractRepository the repository
+     * @param teamService the team service
+     * @param mailService - lazy autowired mail service
+     */
+    public ContractServiceImpl(ContractRepository contractRepository, TeamService teamService, @Lazy MailService mailService) {
+        this.contractRepository = contractRepository;
+        this.teamService = teamService;
+        this.mailService = mailService;
+    }
+
+    @Value("${admin.email}")
+    private String adminEmail;
 
     @Override
     @Transactional
@@ -49,6 +65,7 @@ public class ContractServiceImpl implements ContractService {
         }
         Contract contract = new Contract(player, team, contractFee);
         contractRepository.save(contract);
+        mailService.sendMessage(adminEmail, "Contract " + contract.getId() + " was signed");
         return contract;
     }
 
@@ -56,8 +73,8 @@ public class ContractServiceImpl implements ContractService {
     public BigDecimal calculateContractFee(Player player, Team team) {
         BigDecimal transferFee =
                 BigDecimal.valueOf(player.getExperience())
-                .multiply(CONTRACT_FEE_MULTIPLIER)
-                .divide(BigDecimal.valueOf(player.getAge()), 2, RoundingMode.CEILING);
+                        .multiply(CONTRACT_FEE_MULTIPLIER)
+                        .divide(BigDecimal.valueOf(player.getAge()), 2, RoundingMode.CEILING);
         BigDecimal teamCommission = BigDecimal.valueOf(team.getCommissionPercent()).divide(ONE_HUNDRED_PERCENTS, 2, RoundingMode.CEILING).multiply(transferFee);
         return transferFee.add(teamCommission).setScale(2, RoundingMode.CEILING);
     }

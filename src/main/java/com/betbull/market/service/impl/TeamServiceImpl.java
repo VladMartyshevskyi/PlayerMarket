@@ -1,11 +1,12 @@
 package com.betbull.market.service.impl;
 
-import com.betbull.market.infra.ProcessedBean;
+import com.betbull.market.infra.Benchmark;
 import com.betbull.market.model.Team;
 import com.betbull.market.repository.TeamRepository;
-import com.betbull.market.service.PlayerService;
 import com.betbull.market.service.TeamService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -16,30 +17,13 @@ import java.util.Optional;
  * This class is used to manage football teams.
  */
 @Service
-@ProcessedBean
+@Benchmark
+@RequiredArgsConstructor
 public class TeamServiceImpl implements TeamService {
 
+    private final static Logger LOG = LoggerFactory.getLogger(TeamServiceImpl.class);
+
     private final TeamRepository teamRepository;
-
-    static {
-        System.out.println("TeamServiceImpl static initialization");
-    }
-    
-    /**
-     * Instantiates a new TeamService.
-     *
-     * @param teamRepository the team repository
-     */
-    public TeamServiceImpl(TeamRepository teamRepository) {
-        this.teamRepository = teamRepository;
-        System.out.println("TeamServiceImpl constructor");
-    }
-
-    @Autowired
-    public void setPlayerService(PlayerService playerService) {
-        System.out.println("TeamServiceImpl setter injection of playerService");
-    }
-
 
     @Override
     public Team update(Team team) {
@@ -87,6 +71,8 @@ public class TeamServiceImpl implements TeamService {
 
     @PostConstruct
     public void init() {
-        System.out.println("TeamServiceImpl POST-Construct");
+        LOG.debug("TeamServiceImpl post-construct");
     }
+
+
 }
